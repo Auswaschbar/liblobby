@@ -21,7 +21,7 @@ void Client::Connect(const std::string& host, const unsigned hostport)
 void Client::Send(const std::string& msg)
 {
 	std::cout << "<< " << msg << std::endl;
-	sock.async_send(boost::asio::buffer(msg), boost::bind(&Client::_DataSent, this, _1));
+	sock.async_send(boost::asio::buffer(msg), boost::bind(&Client::_DataSent, this, _1, msg));
 }
 
 void Client::_Connected(const boost::system::error_code& ec)
@@ -49,17 +49,21 @@ void Client::_DataRecieved(const boost::system::error_code& ec)
 		std::cout << ">> " << msg << std::endl;
 		MsgReceived(msg);
 	}
+	else if (ec.value() == boost::asio::error::eof)
+	{
+		std::cout << "Client disconnected" << std::endl;
+	}
 	else
 	{
 		std::cout << "Error in DataRecieved: " << ec << std::endl;
 	}
 }
 
-void Client::_DataSent(const boost::system::error_code& ec)
+void Client::_DataSent(const boost::system::error_code& ec, const std::string& msg)
 {
 	if (!ec)
 	{
-		MsgSent();
+		MsgSent(msg);
 	}
 	else
 	{
