@@ -1,0 +1,9 @@
+LibLobby - Sample implementation of the spring lobby protocol
+
+Install:
+cmake .
+make
+make install
+
+Usage:
+This library uses boost::asio, so all operations happen asyncronously. All callin-functions will return immediately, while all callouts happen from another thead, so be sure your app is threadsafe.
