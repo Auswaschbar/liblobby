@@ -34,9 +34,9 @@ class ManBot : public TASServer
 	{
 		if (channame == "sy")
 		{
-			if (message.find("!whatis") == 0 && message.size() > 6)
+			if (message.find("!whatis") == 0 && message.size() > 8)
 			{
-				const std::string target = "man -f "+message.substr(5, message.find_first_of(" \t\n", 6) - message.size());
+				const std::string target = "man -f "+message.substr(8, message.find_first_of(" \t\n", 9) - message.size());
 				std::ostringstream convert;
 				FILE *out;
 				out = popen(target.c_str(), "r");
