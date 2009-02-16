@@ -9,6 +9,14 @@ class TASServer : public ProtocolHandler
 public:
 	TASServer();
 	
+	void RegisterAccount(const std::string& user, const std::string& passwd);
+	virtual void RegisterSuccess() {};
+	virtual void RegisterFail(const std::string& reason) {};
+	
+	virtual void Agreement(const std::string&) {};
+	virtual void AgreementEnd() {};
+	void AgreementConfirm();
+
 	void Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName);
 	virtual void LoginSuccess(const std::string& username) {};
 	virtual void LoginFail(const std::string& reason) {};

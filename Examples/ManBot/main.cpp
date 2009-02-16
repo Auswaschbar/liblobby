@@ -1,5 +1,7 @@
 #include "TASServer.h"
 
+const std::string myUser = "WhatisBot";
+const std::string myPasswd = "WhatisBotPass";
 
 struct TabReplacer
 {
@@ -15,12 +17,19 @@ class ManBot : public TASServer
 	
 	virtual void LoginFail(const std::string& reason)
 	{
-		if (reason == "Bad username/password")
+		std::cout << "Reason: " << reason << std::endl;
+		if (reason.find("Bad username/password") != std::string::npos)
 		{
-			
+			RegisterAccount(myUser, myPasswd);
 		}
 	};
 	
+	virtual void AgreementEnd()
+	{
+		AgreementConfirm();
+		Login(myUser, myPasswd, "1337", "*", "liblobby V0.1");
+	};
+
 	virtual void Said(const std::string& channame, const std::string& username, const std::string& message)
 	{
 		if (channame == "sy")
@@ -58,7 +67,7 @@ int main()
 {
 	ManBot client;
 	client.Connect("taspringmaster.clan-sy.com", 8200);
-	client.Login("WhatisBot", "", "1337", "*", "liblobby V0.1");
+	client.Login(myUser, myPasswd, "1337", "*", "liblobby V0.1");
 	while (true)
 	{
 		sleep(1);

@@ -13,17 +13,6 @@ Message::Message(const std::string& _command, unsigned newid) : msgId(newid), co
 {
 }
 
-Message::Message(const std::string& _command, const ArgVec& arguments, unsigned newid) : msgId(newid), command(_command)
-{
-	std::ostringstream out;
-	for (ArgVec::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
-	{
-		out << *it << ' ';
-	}
-	out << std::endl;
-	args = out.str();
-}
-
 std::string Message::GetFullStr() const
 {
 	std::ostringstream out;
@@ -72,7 +61,7 @@ std::string InMessage::GetWord() const
 std::string InMessage::GetSentence() const
 {
 	size_t prev = args_pos;
-	size_t next = std::min(args.find("\t", args_pos+1), args.size());
+	size_t next = std::min(args.find_first_of("\t\n", args_pos+1), args.size());
 	args_pos = next+1;
 	//assert(args_pos != std::string::npos);
 	return args.substr(prev, next-prev);

@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "md5.hpp"
+#include "base64.h"
 
 template<typename T>
 void StringConvert(const std::string& input, T& t)
@@ -15,13 +16,27 @@ TASServer::TASServer()
 {
 };
 
+void TASServer::RegisterAccount(const std::string& user, const std::string& passwd)
+{
+	Message msg("REGISTER");
+	msg.Push(user);
+	boost::md5 checksum(passwd.c_str());
+	msg.Push(Base64::encode((const char*)checksum.digest().value()));
+	SendMessage(msg);
+}
+
+void TASServer::AgreementConfirm()
+{
+	Message msg("CONFIRMAGREEMENT");
+	SendMessage(msg);
+}
+
 void TASServer::Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName)
 {
 	Message msg("LOGIN");
-	ArgVec args;
 	msg.Push(user);
 	boost::md5 checksum(passwd.c_str());
-	msg.Push(checksum.digest().hex_str_value());
+	msg.Push(Base64::encode((const char*)checksum.digest().value()));
 	msg.Push(cpu);
 	msg.Push(localIP);
 	msg.Push(lobbyName);
@@ -65,7 +80,7 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	}
 	else if (msg.GetCommand() == "DENIED")
 	{
-		LoginFail(msg.GetWord());
+		LoginFail(msg.GetSentence());
 	}
 	else if (msg.GetCommand() == "JOIN")
 	{
@@ -80,6 +95,22 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const std::string channel = msg.GetWord();
 		const std::string user = msg.GetWord();
 		Said(channel, user, msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "REGISTRATIONDENIED")
+	{
+		RegisterFail(msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "REGISTRATIONACCEPTED")
+	{
+		RegisterSuccess();
+	}
+	else if (msg.GetCommand() == "AGREEMENT")
+	{
+		Agreement(msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "AGREEMENTEND")
+	{
+		AgreementEnd();
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{

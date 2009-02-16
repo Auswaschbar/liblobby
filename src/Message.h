@@ -11,7 +11,6 @@ class Message
 public:
 	Message(unsigned msgId=0);
 	Message(const std::string& command, unsigned msgId=0);
-	Message(const std::string& command, const ArgVec& arguments, unsigned msgId=0);
 	const std::string& GetCommand() const
 	{
 		return command;
