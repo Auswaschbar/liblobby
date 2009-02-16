@@ -36,7 +36,7 @@ class ManBot : public TASServer
 		{
 			if (message.find("!whatis") == 0 && message.size() > 6)
 			{
-				const std::string target = "man -f "+message.substr(5, message.find(" \t\n", 6) - message.size());
+				const std::string target = "man -f "+message.substr(5, message.find_first_of(" \t\n", 6) - message.size());
 				std::ostringstream convert;
 				FILE *out;
 				out = popen(target.c_str(), "r");
