@@ -70,7 +70,8 @@ int main()
 	client.Login(myUser, myPasswd, "1337", "*", "liblobby V0.1");
 	while (true)
 	{
-		sleep(1);
+		client.Ping();
+		sleep(10);
 	}
 	return 0;
 };

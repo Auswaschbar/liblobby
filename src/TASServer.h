@@ -30,6 +30,9 @@ public:
 	void Say(const std::string& channame, const std::string& message);
 	virtual void Said(const std::string& channame, const std::string& username, const std::string& message) {};
 	
+	void Ping();
+	virtual void Pong() {};
+
 protected:
 	virtual void MessageRecieved(const InMessage& msgs);
 };

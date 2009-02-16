@@ -65,6 +65,12 @@ void TASServer::Say(const std::string& channame, const std::string& message)
 	SendMessage(msg);
 }
 
+void TASServer::Ping()
+{
+	Message msg("PING");
+	SendMessage(msg);
+}
+
 void TASServer::MessageRecieved(const InMessage& msg)
 {
 	if (msg.GetCommand() == "TASServer")
@@ -111,6 +117,10 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	else if (msg.GetCommand() == "AGREEMENTEND")
 	{
 		AgreementEnd();
+	}
+	else if (msg.GetCommand() == "PONG")
+	{
+		Pong();
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{
