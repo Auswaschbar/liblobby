@@ -26,7 +26,7 @@ void ProtocolHandler::Connnected()
 
 void ProtocolHandler::MsgReceived(const std::string& msg)
 {
-	MessageRecieved(Message(msg));
+	MessageRecieved(InMessage(msg));
 }
 
 void ProtocolHandler::MsgSent(const std::string& msg)

@@ -12,7 +12,7 @@ public:
 	~ProtocolHandler();
 
 	void SendMessage(const Message&);
-	virtual void MessageRecieved(const Message&) {};
+	virtual void MessageRecieved(const InMessage&) {};
 	
 private:
 	virtual void Connnected();

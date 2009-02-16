@@ -1,21 +1,17 @@
 #include "Message.h"
 
 
+#include <assert.h>
 #include <sstream>
+#include <iostream>
 
-Message::Message(const std::string& message) : msgId(0)
+
+Message::Message(unsigned newid) : msgId(newid)
 {
-	args_pos = 0;
-	std::istringstream inbuf(message);
-	if (message.at(0) == '#')
-	{
-		inbuf.seekg(1, std::ios::beg);
-		inbuf >> msgId;
-	}
-	std::string command;
-	inbuf >> command;
+}
 
-	args = message.substr(inbuf.tellg());
+Message::Message(const std::string& _command, unsigned newid) : msgId(newid), command(_command)
+{
 }
 
 Message::Message(const std::string& _command, const ArgVec& arguments, unsigned newid) : msgId(newid), command(_command)
@@ -29,20 +25,6 @@ Message::Message(const std::string& _command, const ArgVec& arguments, unsigned 
 	args = out.str();
 }
 
-std::string Message::GetWord() const
-{
-	size_t prev = args_pos++;
-	args_pos = args.find_first_of(args_pos, ' ');
-	return args.substr(prev, args_pos);
-}
-
-std::string Message::GetSentence() const
-{
-	size_t prev = args_pos++;
-	args_pos = args.find_first_of(args_pos, '\t');
-	return args.substr(prev, args_pos);
-}
-
 std::string Message::GetFullStr() const
 {
 	std::ostringstream out;
@@ -54,3 +36,46 @@ std::string Message::GetFullStr() const
 	return out.str();
 }
 
+void Message::Push(const std::string& word)
+{
+	if (!args.empty())
+		args+= " ";
+	args += word;
+}
+
+
+InMessage::InMessage(const std::string& message) : args_pos(0)
+{
+	args_pos = 0;
+	std::istringstream inbuf(message);
+	if (message.at(0) == '#')
+	{
+		inbuf.seekg(1, std::ios::beg);
+		inbuf >> msgId;
+	}
+	inbuf >> command;
+
+	size_t args_start = (size_t)inbuf.tellg()+1;
+	if (message.size() > args_start)
+		args = message.substr(args_start);
+}
+
+
+std::string InMessage::GetWord() const
+{
+	size_t prev = args_pos;
+	size_t next = std::min(args.find(" ", args_pos+1), args.size());
+	args_pos = next+1;
+	std::cout << args << std::endl << "# " << prev << " " << next << std::endl;
+	//assert(args_pos != std::string::npos);
+	return args.substr(prev, next-prev);
+}
+
+std::string InMessage::GetSentence() const
+{
+	size_t prev = args_pos;
+	size_t next = std::min(args.find("\t", args_pos+1), args.size());
+	args_pos = next+1;
+	//assert(args_pos != std::string::npos);
+	return args.substr(prev, next-prev);
+}

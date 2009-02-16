@@ -13,34 +13,73 @@ void StringConvert(const std::string& input, T& t)
 
 TASServer::TASServer()
 {
-	loggedIn = false;
 };
 
 void TASServer::Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName)
 {
+	Message msg("LOGIN");
 	ArgVec args;
-	args.push_back(user);
+	msg.Push(user);
 	boost::md5 checksum(passwd.c_str());
-	args.push_back(checksum.digest().hex_str_value());
-	args.push_back(cpu);
-	args.push_back(localIP);
-	args.push_back(lobbyName);
-	SendMessage(Message("LOGIN", args));
+	msg.Push(checksum.digest().hex_str_value());
+	msg.Push(cpu);
+	msg.Push(localIP);
+	msg.Push(lobbyName);
+	SendMessage(msg);
 }
 
-void TASServer::MessageRecieved(const Message& msg)
+void TASServer::Join(const std::string& channel, const std::string& key)
+{
+	Message msg("JOIN");
+	msg.Push(channel);
+	SendMessage(msg);
+}
+
+void TASServer::Leave(const std::string& channel)
+{
+	Message msg("LEAVE");
+	msg.Push(channel);
+	SendMessage(msg);
+}
+
+void TASServer::Say(const std::string& channame, const std::string& message)
+{
+	Message msg("SAY");
+	msg.Push(channame);
+	msg.Push(message);
+	SendMessage(msg);
+}
+
+void TASServer::MessageRecieved(const InMessage& msg)
 {
 	if (msg.GetCommand() == "TASServer")
 	{
-		serverVersion = msg.GetWord();
+		/*serverVersion = msg.GetWord();
 		springVersion = msg.GetWord();
 		StringConvert(msg.GetWord(), UDPPort);
-		StringConvert(msg.GetWord(), servermode);
+		StringConvert(msg.GetWord(), servermode);*/
 	}
 	else if (msg.GetCommand() == "ACCEPTED")
 	{
-		std::cout << "Login accepted" << std::endl;
-		loggedIn = true;
+		LoginSuccess(msg.GetWord());
+	}
+	else if (msg.GetCommand() == "DENIED")
+	{
+		LoginFail(msg.GetWord());
+	}
+	else if (msg.GetCommand() == "JOIN")
+	{
+		JoinSuccess(msg.GetWord());
+	}
+	else if (msg.GetCommand() == "JOINFAILED")
+	{
+		JoinFail(msg.GetWord(), msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "SAID")
+	{
+		const std::string channel = msg.GetWord();
+		const std::string user = msg.GetWord();
+		Said(channel, user, msg.GetSentence());
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{

@@ -8,27 +8,38 @@ typedef std::vector<std::string> ArgVec;
 
 class Message
 {
-	public:
-		Message(const std::string& message);
-		Message(const std::string& command, const ArgVec& arguments, unsigned msgId=0);
-		const std::string& GetCommand() const
-		{
-			return command;
-		};
-		unsigned GetId() const
-		{
-			return msgId;
-		};
+public:
+	Message(unsigned msgId=0);
+	Message(const std::string& command, unsigned msgId=0);
+	Message(const std::string& command, const ArgVec& arguments, unsigned msgId=0);
+	const std::string& GetCommand() const
+	{
+		return command;
+	};
+	unsigned GetId() const
+	{
+		return msgId;
+	};
 
-		std::string GetWord() const;
-		std::string GetSentence() const;
+	std::string GetFullStr() const;
+	
+	void Push(const std::string&);
 
-		std::string GetFullStr() const;
-	private:
-		std::string command;
-		mutable size_t args_pos;
-		std::string args;
-		unsigned msgId;
+protected:
+	std::string command;
+	std::string args;
+	unsigned msgId;
+};
+
+class InMessage : public Message
+{
+public:
+	InMessage(const std::string& message);
+	std::string GetWord() const;
+	std::string GetSentence() const;
+	
+private:
+	mutable size_t args_pos;
 };
 
 #endif
