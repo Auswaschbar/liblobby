@@ -25,25 +25,24 @@ void TASServer::Login(const std::string& user, const std::string& passwd, const 
 	args.push_back(cpu);
 	args.push_back(localIP);
 	args.push_back(lobbyName);
-	SendMessage("LOGIN", args);
+	SendMessage(Message("LOGIN", args));
 }
 
-void TASServer::MessageRecieved(unsigned msgId, const std::string& command, const ArgVec& arguments)
+void TASServer::MessageRecieved(const Message& msg)
 {
-	if (command == "TASServer")
+	if (msg.GetCommand() == "TASServer")
 	{
-		assert(!arguments.empty());
-		serverVersion = arguments[0];
-		springVersion = arguments[1];
-		StringConvert(arguments[2], UDPPort);
-		StringConvert(arguments[3], servermode);
+		serverVersion = msg.GetWord();
+		springVersion = msg.GetWord();
+		StringConvert(msg.GetWord(), UDPPort);
+		StringConvert(msg.GetWord(), servermode);
 	}
-	else if (command == "ACCEPTED")
+	else if (msg.GetCommand() == "ACCEPTED")
 	{
 		std::cout << "Login accepted" << std::endl;
 		loggedIn = true;
 	}
-	else if (command == "MOTD")
+	else if (msg.GetCommand() == "MOTD")
 	{
 	}
 }

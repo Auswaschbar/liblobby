@@ -11,7 +11,7 @@ public:
 	void Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName);
 	
 protected:
-	virtual void MessageRecieved(unsigned msgId, const std::string& command, const ArgVec& arguments);
+	virtual void MessageRecieved(const Message& msgs);
 	
 	bool loggedIn;
 	std::string serverVersion;

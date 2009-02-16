@@ -36,7 +36,7 @@ void Client::Disconnect()
 
 void Client::Send(const std::string& msg)
 {
-	std::cout << "<< " << msg << std::endl;
+	std::cout << "<< " << msg;
 	sock->async_send(boost::asio::buffer(msg), boost::bind(&Client::_DataSent, this, _1, msg));
 }
 

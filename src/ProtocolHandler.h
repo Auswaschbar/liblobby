@@ -3,17 +3,16 @@
 
 
 #include "Client.h"
-
+#include "Message.h"
 
 class ProtocolHandler : public Client
 {
 public:
-	typedef std::vector<std::string> ArgVec;
 	ProtocolHandler();
 	~ProtocolHandler();
 
-	void SendMessage(const std::string& command, const ArgVec& arguments, unsigned msgId = 0);
-	virtual void MessageRecieved(unsigned msgId, const std::string& command, const ArgVec& arguments) {};
+	void SendMessage(const Message&);
+	virtual void MessageRecieved(const Message&) {};
 	
 private:
 	virtual void Connnected();
