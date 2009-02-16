@@ -60,6 +60,11 @@ void TASServer::Leave(const std::string& channel)
 void TASServer::Say(const std::string& channame, const std::string& message)
 {
 	Message msg("SAY");
+}
+
+void TASServer::SayEx(const std::string& channame, const std::string& message)
+{
+	Message msg("SAYEX");
 	msg.Push(channame);
 	msg.Push(message);
 	SendMessage(msg);
@@ -121,6 +126,12 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	else if (msg.GetCommand() == "PONG")
 	{
 		Pong();
+	}
+	else if (msg.GetCommand() == "SAIDEX")
+	{
+		const std::string channel = msg.GetWord();
+		const std::string user = msg.GetWord();
+		Said(channel, user, msg.GetSentence());
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{

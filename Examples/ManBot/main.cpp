@@ -52,7 +52,7 @@ class ManBot : public TASServer
 				{
 					std::string line;
 					std::getline(stringbuf,line);
-					Say("sy", line);
+					SayEx("sy", line);
 				}
 			}
 			if (message.find("!quit") == 0)
