@@ -14,3 +14,6 @@ target_link_libraries(lobby ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
 include_directories(src)
 add_executable(manbot Examples/ManBot/main.cpp)
 target_link_libraries(manbot lobby)
+
+add_executable(fortunebot Examples/FortuneBot.cpp)
+target_link_libraries(fortunebot lobby)
