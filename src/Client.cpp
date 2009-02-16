@@ -8,10 +8,17 @@
 using namespace std;
 using namespace boost::asio;
 
+#ifdef DEBUG
+#define LOG(state) std::cout << state;
+#else
+#define LOG(state)
+#endif
+
+
 Client::Client()
 {
 	sock.reset(new boost::asio::ip::tcp::socket(io_service));
-	std::cout << "Client constructed" << std::endl;
+	LOG("Client constructed" << std::endl);
 	connected = false;
 }
 
@@ -43,15 +50,15 @@ void Client::Disconnect()
 
 void Client::Send(const std::string& msg)
 {
-	std::cout << "<< " << msg;
+	LOG("<< " << msg);
 	sock->async_send(boost::asio::buffer(msg), boost::bind(&Client::_DataSent, this, _1, msg));
 }
 
 void Client::Run()
 {
-	std::cout << "Running seperate thread" << std::endl;
+	LOG("Running seperate thread" << std::endl);
 	io_service.run();
-	std::cout << "Finished running seperate thread" << std::endl;
+	LOG("Finished running seperate thread" << std::endl);
 }
 
 void Client::_Connected(const boost::system::error_code& ec)
@@ -64,7 +71,7 @@ void Client::_Connected(const boost::system::error_code& ec)
 	}
 	else
 	{
-		std::cout << "Connecting failed: " << ec << std::endl;
+		LOG("Connecting failed: " << ec << std::endl);
 	}
 }
 
@@ -77,16 +84,16 @@ void Client::_DataRecieved(const boost::system::error_code& ec)
 		std::getline(buf, msg);
 		boost::asio::async_read_until(*sock, data_, "\n", boost::bind(&Client::_DataRecieved, this, _1));
 		
-		std::cout << ">> " << msg << std::endl;
+		LOG(">> " << msg << std::endl);
 		MsgReceived(msg);
 	}
 	else if (ec.value() == boost::asio::error::eof)
 	{
-		std::cout << "Client disconnected" << std::endl;
+		LOG("Client disconnected" << std::endl);
 	}
 	else
 	{
-		std::cout << "Error in DataRecieved: " << ec << std::endl;
+		LOG("Error in DataRecieved: " << ec << std::endl);
 	}
 }
 
@@ -98,6 +105,6 @@ void Client::_DataSent(const boost::system::error_code& ec, const std::string& m
 	}
 	else
 	{
-		std::cout << "Error in DataSent: " << ec.message() << std::endl;
+		LOG("Error in DataSent: " << ec.message() << std::endl);
 	}
 }

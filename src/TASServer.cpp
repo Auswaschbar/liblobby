@@ -88,10 +88,12 @@ void TASServer::MessageRecieved(const InMessage& msg)
 {
 	if (msg.GetCommand() == "TASServer")
 	{
-		/*serverVersion = msg.GetWord();
-		springVersion = msg.GetWord();
-		StringConvert(msg.GetWord(), UDPPort);
-		StringConvert(msg.GetWord(), servermode);*/
+		const std::string server = msg.GetWord();
+		const std::string spring = msg.GetWord();
+		int port, mode;
+		StringConvert(msg.GetWord(), port);
+		StringConvert(msg.GetWord(), mode);
+		TASServerMsg(server, spring, port, mode);
 	}
 	else if (msg.GetCommand() == "ACCEPTED")
 	{

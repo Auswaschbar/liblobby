@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 FIND_PACKAGE(Boost 1.35.0 COMPONENTS thread system REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
-set (CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXXFLAGS_DEBUG} -ggdb)
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXXFLAGS_DEBUG} -ggdb -DDEBUG")
 set(EXECUTABLE_OUTPUT_PATH bin)
 
 aux_source_directory(src libfiles)

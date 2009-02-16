@@ -9,6 +9,8 @@ class TASServer : public ProtocolHandler
 public:
 	TASServer();
 	
+	virtual void TASServerMsg(const std::string& springVersion, const std::string& ServerVersion, int UDPPort, int mode) {};
+	
 	void RegisterAccount(const std::string& user, const std::string& passwd);
 	virtual void RegisterSuccess() {};
 	virtual void RegisterFail(const std::string& reason) {};
