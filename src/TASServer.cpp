@@ -25,6 +25,23 @@ void TASServer::RegisterAccount(const std::string& user, const std::string& pass
 	SendMessage(msg);
 }
 
+void TASServer::RenameAccount(const std::string& newname)
+{
+	Message msg("RENAMEACCOUNT");
+	msg.Push(newname);
+	SendMessage(msg);
+}
+
+void TASServer::ChangePasword(const std::string& oldpass, const std::string& newpass)
+{
+	Message msg("CHANGEPASSWORD");
+	boost::md5 checksumold(oldpass.c_str());
+	msg.Push(Base64::encode((const char*)checksumold.digest().value()));
+	boost::md5 checksumnew(newpass.c_str());
+	msg.Push(Base64::encode((const char*)checksumnew.digest().value()));
+	SendMessage(msg);
+}
+
 void TASServer::AgreementConfirm()
 {
 	Message msg("CONFIRMAGREEMENT");
@@ -95,6 +112,15 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		StringConvert(msg.GetWord(), mode);
 		TASServerMsg(server, spring, port, mode);
 	}
+	else if (msg.GetCommand() == "SERVERMSG")
+	{
+		ServerMessage(msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "SERVERMSGBOX")
+	{
+		const std::string message = msg.GetSentence();
+		ServerMessageBox(message, msg.GetSentence());
+	}
 	else if (msg.GetCommand() == "ACCEPTED")
 	{
 		LoginSuccess(msg.GetWord());
@@ -102,6 +128,10 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	else if (msg.GetCommand() == "DENIED")
 	{
 		LoginFail(msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "LOGININFOEND")
+	{
+		LoginInfoEnd();
 	}
 	else if (msg.GetCommand() == "JOIN")
 	{

@@ -9,11 +9,17 @@ class TASServer : public ProtocolHandler
 public:
 	TASServer();
 	
+	//TODO: offerfile / requestupdate, Battle handling
 	virtual void TASServerMsg(const std::string& springVersion, const std::string& ServerVersion, int UDPPort, int mode) {};
+	virtual void ServerMessage(const std::string& message) {};
+	virtual void ServerMessageBox(const std::string& message, const std::string& url) {};
 	
 	void RegisterAccount(const std::string& user, const std::string& passwd);
 	virtual void RegisterSuccess() {};
 	virtual void RegisterFail(const std::string& reason) {};
+	
+	void RenameAccount(const std::string& newname);
+	void ChangePasword(const std::string& oldpass, const std::string& newpass);
 	
 	virtual void Agreement(const std::string&) {};
 	virtual void AgreementEnd() {};
@@ -22,6 +28,7 @@ public:
 	void Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName);
 	virtual void LoginSuccess(const std::string& username) {};
 	virtual void LoginFail(const std::string& reason) {};
+	virtual void LoginInfoEnd() {};
 
 	virtual void Motd(const std::string& message) {};
 
