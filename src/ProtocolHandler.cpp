@@ -2,32 +2,16 @@
 
 #include <iostream>
 #include <sstream>
-#include <boost/format.hpp>
 
 #include "Client.h"
-#include "md5.hpp"
 
-using boost::format;
 
-ProtocolHandler::ProtocolHandler(boost::asio::io_service& service) : Client(service)
+ProtocolHandler::ProtocolHandler()
 {
-	// netThread = new boost::thread(boost::bind(&boost::asio::io_service::run, &io_service));
 }
 
 ProtocolHandler::~ProtocolHandler()
 {
-}
-
-void ProtocolHandler::Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName)
-{
-	ArgVec args;
-	args.push_back(user);
-	boost::md5 checksum(passwd.c_str());
-	args.push_back(checksum.digest().hex_str_value());
-	args.push_back(cpu);
-	args.push_back(localIP);
-	args.push_back(lobbyName);
-	SendMessage("LOGIN", args);
 }
 
 void ProtocolHandler::SendMessage(const std::string& command, const ArgVec& arguments, unsigned msgId)
@@ -77,16 +61,4 @@ void ProtocolHandler::MsgSent(const std::string& msg)
 {
 	//std::cout << "Data sent" << std::endl;
 }
-/*
-void ProtocolHandler::HandleMessage(const std::vector<std::string>& words)
-{
-	assert(!words.empty());
-	if (words[0] == "TASServer")
-	{
-		
-	}
-	else if (words[0] == "ACCEPTED")
-	{
-		std::cout << "Login accepted" << std::endl;
-	}
-}*/
+
