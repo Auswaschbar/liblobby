@@ -11,6 +11,11 @@ void StringConvert(const std::string& input, T& t)
 	stream >> t;
 }
 
+TASServer::TASServer()
+{
+	loggedIn = false;
+};
+
 void TASServer::Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName)
 {
 	ArgVec args;
@@ -25,17 +30,20 @@ void TASServer::Login(const std::string& user, const std::string& passwd, const 
 
 void TASServer::MessageRecieved(unsigned msgId, const std::string& command, const ArgVec& arguments)
 {
-	assert(!arguments.empty());
-	if (arguments[0] == "TASServer")
+	if (command == "TASServer")
 	{
+		assert(!arguments.empty());
 		serverVersion = arguments[0];
 		springVersion = arguments[1];
 		StringConvert(arguments[2], UDPPort);
 		StringConvert(arguments[3], servermode);
 	}
-	else if (arguments[0] == "ACCEPTED")
+	else if (command == "ACCEPTED")
 	{
 		std::cout << "Login accepted" << std::endl;
 		loggedIn = true;
+	}
+	else if (command == "MOTD")
+	{
 	}
 }

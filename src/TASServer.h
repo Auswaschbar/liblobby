@@ -6,10 +6,8 @@
 class TASServer : public ProtocolHandler
 {
 public:
-	TASServer()
-	{
-		loggedIn = false;
-	};
+	TASServer();
+	
 	void Login(const std::string& user, const std::string& passwd, const std::string& cpu, const std::string& localIP, const std::string& lobbyName);
 	
 protected:
