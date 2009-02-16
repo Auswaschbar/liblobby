@@ -2,9 +2,11 @@
 
 #include <sstream>
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 using namespace std;
+using namespace boost::asio;
 
 Client::Client()
 {
@@ -20,9 +22,14 @@ Client::~Client()
 
 void Client::Connect(const std::string& host, const unsigned hostport)
 {
-	std::cout << "Connecting to " << host << ":" << hostport << std::endl;
+	ip::tcp::resolver resolver(io_service);
+	ip::tcp::resolver::query query(host, boost::lexical_cast<std::string>(hostport));
+	ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+	sock->async_connect(*endpoint_iterator, boost::bind(&Client::_Connected, this, _1));
+	
+	/*std::cout << "Connecting to " << host << ":" << hostport << std::endl;
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), hostport);
-	sock->async_connect(endpoint, boost::bind(&Client::_Connected, this, _1) );
+	sock->async_connect(host, hostport, boost::bind(&Client::_Connected, this, _1) );*/
 	netThread = boost::thread(boost::bind(&Client::Run, this));
 }
 

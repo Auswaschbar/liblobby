@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <sstream>
-#include <iostream>
 
 
 Message::Message(unsigned newid) : msgId(newid)
@@ -66,7 +65,6 @@ std::string InMessage::GetWord() const
 	size_t prev = args_pos;
 	size_t next = std::min(args.find(" ", args_pos+1), args.size());
 	args_pos = next+1;
-	std::cout << args << std::endl << "# " << prev << " " << next << std::endl;
 	//assert(args_pos != std::string::npos);
 	return args.substr(prev, next-prev);
 }
