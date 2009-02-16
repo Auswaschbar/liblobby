@@ -50,6 +50,9 @@ public:
 	
 	void Ping();
 	virtual void Pong() {};
+	
+	virtual void AddUser(const std::string& username, const std::string& country, const std::string& cpu) {};
+	virtual void RemoveUser(const std::string& username) {};
 
 protected:
 	virtual void MessageRecieved(const InMessage& msgs);

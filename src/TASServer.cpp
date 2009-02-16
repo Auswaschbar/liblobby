@@ -183,6 +183,17 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const std::string user = msg.GetWord();
 		SaidPrivate(user, msg.GetSentence());
 	}
+	else if (msg.GetCommand() == "ADDUSER")
+	{
+		const std::string user = msg.GetWord();
+		const std::string country = msg.GetWord();
+		AddUser(user, country, msg.GetSentence());
+	}
+	
+	else if (msg.GetCommand() == "REMOVEUSER")
+	{
+		RemoveUser(msg.GetSentence());
+	}
 	else if (msg.GetCommand() == "MOTD")
 	{
 		Motd(msg.GetSentence());
