@@ -70,6 +70,14 @@ void TASServer::SayEx(const std::string& channame, const std::string& message)
 	SendMessage(msg);
 }
 
+void TASServer::SayPrivate(const std::string& username, const std::string& message)
+{
+	Message msg("SAYPRIVATE");
+	msg.Push(username);
+	msg.Push(message);
+	SendMessage(msg);
+}
+
 void TASServer::Ping()
 {
 	Message msg("PING");
@@ -133,7 +141,18 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const std::string user = msg.GetWord();
 		Said(channel, user, msg.GetSentence());
 	}
+	else if (msg.GetCommand() == "SAYPRIVATE")
+	{
+		const std::string user = msg.GetWord();
+		MeSaidPrivate(user, msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "SAIDPRIVATE")
+	{
+		const std::string user = msg.GetWord();
+		SaidPrivate(user, msg.GetSentence());
+	}
 	else if (msg.GetCommand() == "MOTD")
 	{
+		Motd(msg.GetSentence());
 	}
 }

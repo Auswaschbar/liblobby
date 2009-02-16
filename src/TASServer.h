@@ -21,6 +21,8 @@ public:
 	virtual void LoginSuccess(const std::string& username) {};
 	virtual void LoginFail(const std::string& reason) {};
 
+	virtual void Motd(const std::string& message) {};
+
 	void Join(const std::string& channel, const std::string& key = "");
 	virtual void JoinSuccess(const std::string& channame) {};
 	virtual void JoinFail(const std::string& channame, const std::string& reason) {};
@@ -32,7 +34,11 @@ public:
 	
 	void SayEx(const std::string& channame, const std::string& message);
 	virtual void SaidEx(const std::string& channame, const std::string& username, const std::string& message) {};
-
+	
+	void SayPrivate(const std::string& username, const std::string& message);
+	virtual void MeSaidPrivate(const std::string& username, const std::string& message) {};
+	virtual void SaidPrivate(const std::string& username, const std::string& message) {};
+	
 	void Ping();
 	virtual void Pong() {};
 
