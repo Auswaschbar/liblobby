@@ -1,5 +1,7 @@
 #include "TASServer.h"
 
+#include <unistd.h>
+
 const std::string myUser = "FortuneBot";
 const std::string myPasswd = "FortuneBot";
 
@@ -73,6 +75,15 @@ class FortuneBot : public TASServer
 				// admin commands
 				if (message.find("!quit") == 0)
 				{
+					exit(0);
+				}
+				else if (message.find("!restart") == 0)
+				{
+					char* args[1];
+					args[0] = "fortunebot";
+					char* env[0];
+					execve ("fortunebot", args, env);
+					SaidPrivate("Auswaschbar", "Fehler");
 					exit(0);
 				}
 			}
