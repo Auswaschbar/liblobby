@@ -68,9 +68,13 @@ class FortuneBot : public TASServer
 				stringbuf >> buf;
 				SayEx("sy", ": "+buf+" gains 1 free internets");
 			}
-			else if (message.find("!quit") == 0)
+			else if (username == "Auswaschbar")
 			{
-				exit(0);
+				// admin commands
+				if (message.find("!quit") == 0)
+				{
+					exit(0);
+				}
 			}
 		}
 	};
