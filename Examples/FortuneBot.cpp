@@ -84,6 +84,14 @@ class FortuneBot : public TASServer
 				SaidPrivate("Auswaschbar", "Fehler");
 				exit(0);
 			}
+			else if (message.find("!addchannel") == 0)
+			{
+				std::istringstream stringbuf(message);
+				std::string buf;
+				stringbuf >> buf;
+				stringbuf >> buf;
+				Join(buf);
+			}
 		}
 	};
 };
