@@ -54,7 +54,7 @@ public:
 	virtual void AddUser(const std::string& username, const std::string& country, const std::string& cpu) {};
 	virtual void RemoveUser(const std::string& username) {};
 	void MyStatus(bool ingame, bool away);
-	virtual void ClientStatus(bool ingame, bool away, int rank, bool moderator, bool bot) {};
+	virtual void ClientStatus(const std::string& name, bool ingame, bool away, int rank, bool moderator, bool bot) {};
 
 protected:
 	virtual void MessageRecieved(const InMessage& msgs);

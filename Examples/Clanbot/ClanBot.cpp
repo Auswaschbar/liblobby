@@ -93,13 +93,6 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 				for (size_t i = clanIt->first.size(); i <= 10; ++i)
 					buf << " ";
 				buf << clanIt->second.size() << endl;
-				/*for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
-				{
-					buf << "# " << it->name;
-					for (size_t i = it->name.size(); i <= 30; ++i)
-						buf << " ";
-					buf << it->country << " " << it->cpu << endl;
-				}*/
 			}
 		}
 		return buf.str();
@@ -172,6 +165,7 @@ void ClanBot::AddUser(const std::string& username, const std::string& country, c
 		temp.name = username;
 		temp.country = country;
 		temp.cpu = cpu;
+		temp.isBot = false;
 		clanUserMap[clan].push_back(temp);
 	}
 }
@@ -194,4 +188,8 @@ void ClanBot::RemoveUser(const std::string& username)
 			}
 		}
 	}
+}
+
+void ClanBot::ClientStatus(const std::string& name, bool ingame, bool away, int rank, bool moderator, bool bot)
+{
 }

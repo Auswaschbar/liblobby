@@ -11,6 +11,7 @@ struct User
 	std::string name;
 	std::string country;
 	std::string cpu;
+	bool isBot;
 };
 
 class ClanBot : public TASServer
@@ -31,6 +32,7 @@ private:
 	
 	virtual void AddUser(const std::string& username, const std::string& country, const std::string& cpu);
 	virtual void RemoveUser(const std::string& username);
+	virtual void ClientStatus(const std::string& name, bool ingame, bool away, int rank, bool moderator, bool bot);
 
 	// own functions
 	std::string HandleMessage(const std::string& username, const std::string& message);

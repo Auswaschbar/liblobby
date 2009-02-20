@@ -215,6 +215,7 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	}
 	else if (msg.GetCommand() == "CLIENTSTATUS")
 	{
+		const std::string user = msg.GetWord();
 		unsigned long flags = 0;
 		StringConvert(msg.GetWord(), flags);
 		std::bitset<6> bits(flags);
@@ -223,7 +224,7 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const int rank = (bits[2]? 1 : 0) + (bits[3]? 2 : 0) + (bits[4]? 4 : 0);
 		const bool moderator = bits[5];
 		const bool bot = bits[6];
-		ClientStatus(ingame, away, rank, moderator, bot);
+		ClientStatus(user, ingame, away, rank, moderator, bot);
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{
