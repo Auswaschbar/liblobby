@@ -1,6 +1,7 @@
 #include "TASServer.h"
 
 #include <sstream>
+#include <bitset>
 
 #include "md5.hpp"
 #include "base64.h"
@@ -101,6 +102,25 @@ void TASServer::Ping()
 	SendMessage(msg);
 }
 
+void TASServer::MyStatus(bool ingame, bool away)
+{
+	Message msg("MYSTATUS");
+	if (!ingame)
+	{
+		if (!away)
+			msg.Push("0");
+		else
+			msg.Push("2");
+	}
+	else
+	{
+		if (!away)
+			msg.Push("1");
+		else
+			msg.Push("3");
+	}
+}
+
 void TASServer::MessageRecieved(const InMessage& msg)
 {
 	if (msg.GetCommand() == "TASServer")
@@ -189,10 +209,21 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const std::string country = msg.GetWord();
 		AddUser(user, country, msg.GetSentence());
 	}
-	
 	else if (msg.GetCommand() == "REMOVEUSER")
 	{
 		RemoveUser(msg.GetSentence());
+	}
+	else if (msg.GetCommand() == "CLIENTSTATUS")
+	{
+		unsigned long flags = 0;
+		StringConvert(msg.GetWord(), flags);
+		std::bitset<6> bits(flags);
+		const bool ingame = bits[0];
+		const bool away = bits[1];
+		const int rank = (bits[2]? 1 : 0) + (bits[3]? 2 : 0) + (bits[4]? 4 : 0);
+		const bool moderator = bits[5];
+		const bool bot = bits[6];
+		ClientStatus(ingame, away, rank, moderator, bot);
 	}
 	else if (msg.GetCommand() == "MOTD")
 	{
