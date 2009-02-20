@@ -9,7 +9,7 @@ Message::Message(unsigned newid) : msgId(newid)
 {
 }
 
-Message::Message(const std::string& _command, unsigned newid) : msgId(newid), command(_command)
+Message::Message(const std::string& _command, unsigned newid) : command(_command), msgId(newid)
 {
 }
 

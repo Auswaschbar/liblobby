@@ -16,7 +16,7 @@ public:
 	
 	bool IsConnected()
 	{
-		connected;
+		return connected;
 	};
 
 protected:

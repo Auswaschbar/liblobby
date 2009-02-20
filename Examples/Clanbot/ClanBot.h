@@ -36,8 +36,7 @@ private:
 	std::string HandleMessage(const std::string& username, const std::string& message);
 
 	typedef std::list<std::string> channelList;
-	typedef std::map<std::string, channelList> clanChannelLists;
-	clanChannelLists clanChannels;
+	channelList channels;
 	
 	typedef std::map< std::string, std::list <User> > clanMap;
 	clanMap clanUserMap;

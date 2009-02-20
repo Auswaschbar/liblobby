@@ -9,20 +9,17 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 {
 	Connect(server, port);
 	
-	fstream channels("channels.txt");
-	while (!channels.eof())
+	fstream channelsFile("channels.txt");
+	while (channelsFile.is_open() && !channelsFile.eof())
 	{
 		std::string line;
-		std::getline(channels,line);
+		std::getline(channelsFile,line);
 		std::istringstream lineBuffer(line);
-		std::string clan;
-		lineBuffer >> clan;
-		while (lineBuffer.eof())
+		std::string channel;
+		lineBuffer >> channel;
+		if (!channel.empty())
 		{
-			std::string channel;
-			lineBuffer >> channel;
-			if (!channel.empty()) // safety
-				clanChannels[clan].push_back(channel);
+			channels.push_back(channel);
 		}
 	}
 }
@@ -40,12 +37,9 @@ void ClanBot::Disconnnected()
 void ClanBot::LoginSuccess(const std::string& username)
 {
 	Join("clanbot");
-	for (clanChannelLists::const_iterator it = clanChannels.begin(); it != clanChannels.end(); ++it)
+	for (channelList::const_iterator it = channels.begin(); it != channels.end(); ++it)
 	{
-		for (channelList::const_iterator channel = it->second.begin(); channel != it->second.end(); ++channel)
-		{
-			Join(*channel);
-		}
+		Join(*it);
 	}
 }
 
@@ -56,32 +50,104 @@ void ClanBot::LoginFail(const std::string& reason)
 
 void ClanBot::Said(const std::string& channame, const std::string& username, const std::string& message)
 {
-	SayEx(channame, HandleMessage(username, message));
+	std::istringstream stringbuf(HandleMessage(username, message));
+	while (!stringbuf.eof())
+	{
+		std::string line;
+		std::getline(stringbuf,line);
+		SayEx(channame, line);
+	}
 }
 
 void ClanBot::SaidPrivate(const std::string& username, const std::string& message)
 {
-	SayPrivate(username, HandleMessage(username, message));
+	std::istringstream stringbuf(HandleMessage(username, message));
+	while (!stringbuf.eof())
+	{
+		std::string line;
+		std::getline(stringbuf,line);
+		SayPrivate(username, line);
+	}
 }
 
 std::string ClanBot::HandleMessage(const std::string& username, const std::string& message)
 {
 	if (message.find("!online") == 0)
 	{
+		size_t minOnline = 2;
+		if (message.size() > 8)
+		{
+			std::istringstream stringbuf(message);
+			std::string temp;
+			stringbuf >> temp;
+			stringbuf >> minOnline;
+		}
+		
 		ostringstream buf;
+		buf << "Clan Players online:\n";
 		for (clanMap::const_iterator clanIt = clanUserMap.begin(); clanIt != clanUserMap.end(); ++clanIt)
 		{
-			buf << clanIt->first << std::endl;
+			if (clanIt->second.size() >= minOnline)
+			{
+				buf << clanIt->first;
+				for (size_t i = clanIt->first.size(); i <= 10; ++i)
+					buf << " ";
+				buf << clanIt->second.size() << endl;
+				/*for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
+				{
+					buf << "# " << it->name;
+					for (size_t i = it->name.size(); i <= 30; ++i)
+						buf << " ";
+					buf << it->country << " " << it->cpu << endl;
+				}*/
+			}
+		}
+		return buf.str();
+	}
+	else if (message.find("!clan") == 0)
+	{
+		if (message.size () <= 6)
+			return "";
+		
+		std::istringstream stringbuf(message);
+		std::string tempclan;
+		stringbuf >> tempclan;
+		stringbuf >> tempclan;
+		
+		clanMap::const_iterator clanIt = clanUserMap.find(tempclan);
+		ostringstream buf;
+		
+		if (clanIt != clanUserMap.end())
+		{
+			buf << "Online players of clan " << tempclan << ": " << clanIt->second.size() << endl;
 			for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
 			{
-				
 				buf << "# " << it->name;
-				for (size_t i = it->name.size(); i >= 20; ++i)
+				for (size_t i = it->name.size(); i <= 30; ++i)
 					buf << " ";
 				buf << it->country << " " << it->cpu << endl;
 			}
 		}
+		else
+		{
+			buf << "Clan " << tempclan << " deos not exists or there are no members online" << endl;
+		}
+		return buf.str();
 	}
+	else if (message.find("!addchannel") == 0)
+	{
+		std::istringstream stringbuf(message);
+		std::string buf;
+		stringbuf >> buf;
+		stringbuf >> buf;
+		Join(buf);
+		channels.push_back(buf);
+		ostringstream output;
+		output << "Joining channel " << buf << endl;
+		return output.str();
+	}
+	else
+		return "";
 }
 
 std::string GetClanFromName(const std::string& username)
@@ -90,7 +156,7 @@ std::string GetClanFromName(const std::string& username)
 	if (first != string::npos)
 	{
 		size_t next = username.find_first_of(']', first+1);
-		const std::string clan = username.substr(first, next - first);
+		const std::string clan = username.substr(first+1, next - first-1);
 		return clan;
 	}
 	else
