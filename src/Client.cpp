@@ -29,6 +29,7 @@ Client::~Client()
 
 void Client::Connect(const std::string& host, const unsigned hostport)
 {
+	sock->close();
 	ip::tcp::resolver resolver(io_service);
 	ip::tcp::resolver::query query(host, boost::lexical_cast<std::string>(hostport));
 	ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
@@ -67,7 +68,7 @@ void Client::_Connected(const boost::system::error_code& ec)
 	{
 		boost::asio::async_read_until(*sock, data_, "\n", boost::bind(&Client::_DataRecieved, this, _1));
 		connected = true;
-		Connnected();
+		Connected();
 	}
 	else
 	{
@@ -90,6 +91,7 @@ void Client::_DataRecieved(const boost::system::error_code& ec)
 	else if (ec.value() == boost::asio::error::eof)
 	{
 		LOG("Client disconnected" << std::endl);
+		Disconnected();
 	}
 	else
 	{

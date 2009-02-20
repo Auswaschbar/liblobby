@@ -14,8 +14,10 @@ public:
 	void SendMessage(const Message&);
 	virtual void MessageRecieved(const InMessage&) {};
 	
+	virtual void Connected();
+	virtual void Disconnected();
+	
 private:
-	virtual void Connnected();
 	virtual void MsgReceived(const std::string& msg);
 	virtual void MsgSent(const std::string& msg);
 

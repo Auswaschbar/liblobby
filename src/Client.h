@@ -22,7 +22,8 @@ public:
 protected:
 	void Send(const std::string& msg);
 	
-	virtual void Connnected() = 0;
+	virtual void Connected() = 0;
+	virtual void Disconnected() = 0;
 	virtual void MsgReceived(const std::string& msg) = 0;
 	virtual void MsgSent(const std::string& msg) = 0;
 

@@ -19,9 +19,14 @@ void ProtocolHandler::SendMessage(const Message& msg)
 	Send(msg.GetFullStr());
 }
 
-void ProtocolHandler::Connnected()
+void ProtocolHandler::Connected()
 {
 	std::cout << "Client connected" << std::endl;
+}
+
+void ProtocolHandler::Disconnected()
+{
+	std::cout << "Client disconnected" << std::endl;
 }
 
 void ProtocolHandler::MsgReceived(const std::string& msg)

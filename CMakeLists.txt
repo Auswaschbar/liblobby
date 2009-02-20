@@ -12,8 +12,9 @@ add_library(lobby SHARED ${libfiles})
 target_link_libraries(lobby ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
 
 include_directories(src)
-add_executable(manbot Examples/ManBot/main.cpp)
-target_link_libraries(manbot lobby)
+aux_source_directory(Examples/Clanbot cbfiles)
+add_executable(clanbot ${cbfiles})
+target_link_libraries(clanbot lobby)
 
 add_executable(fortunebot Examples/FortuneBot.cpp)
 target_link_libraries(fortunebot lobby)
