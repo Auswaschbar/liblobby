@@ -190,6 +190,21 @@ void ClanBot::RemoveUser(const std::string& username)
 	}
 }
 
-void ClanBot::ClientStatus(const std::string& name, bool ingame, bool away, int rank, bool moderator, bool bot)
+void ClanBot::ClientStatus(const std::string& username, bool ingame, bool away, int rank, bool moderator, bool bot)
 {
+	if (bot)
+	{
+		clanMap::iterator clanIt = clanUserMap.find(GetClanFromName(username));
+		if (clanIt != clanUserMap.end())
+		{
+			for (std::list <User>::iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
+			{
+				if (it->name == username)
+				{
+					it->isBot = true;
+					return;
+				}
+			}
+		}
+	}
 }
