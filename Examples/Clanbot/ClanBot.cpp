@@ -10,17 +10,22 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 	Connect(server, port);
 	
 	fstream channelsFile("channels.list");
-	channels.insert("clanbot");
+	{
+		Channel cur;
+		cur.name = "clanbot";
+		joinRequests.insert(cur);
+	}
 	while (channelsFile.is_open() && !channelsFile.eof())
 	{
 		std::string line;
 		std::getline(channelsFile,line);
 		std::istringstream lineBuffer(line);
-		std::string channel;
-		lineBuffer >> channel;
-		if (!channel.empty())
+		Channel cur;
+		lineBuffer >> cur.name;
+		if (!cur.name.empty())
 		{
-			channels.insert(channel);
+			lineBuffer >> cur.pwd;
+			joinRequests.insert(cur);
 		}
 	}
 }
@@ -37,9 +42,9 @@ void ClanBot::Disconnnected()
 
 void ClanBot::LoginSuccess(const std::string& username)
 {
-	for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+	for (channelSet::const_iterator it = joinRequests.begin(); it != joinRequests.end(); ++it)
 	{
-		Join(*it);
+		Join(it->name, it->pwd);
 	}
 }
 
@@ -53,9 +58,9 @@ void ClanBot::Said(const std::string& channame, const std::string& username, con
 	if (message.find("!gtfo") == 0)
 	{
 		Leave(channame);
-		for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		for (channelSet::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		{
-			if (*it == channame)
+			if (it->name == channame)
 			{
 				channels.erase(it);
 				break;
@@ -89,19 +94,41 @@ void ClanBot::SaidPrivate(const std::string& username, const std::string& messag
 
 void ClanBot::JoinSuccess(const std::string& channame)
 {
-	if (channels.count(channame) == 0)
+	if (!IsInChannel(channame))
 	{
-		channels.insert(channame);
-		std::ofstream file("channels.list");
-		for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		Channel cur;
+		cur.name = channame;
+		for (channelSet::iterator requested = joinRequests.begin(); requested != joinRequests.end(); ++requested)
 		{
-			file << *it << endl;
+			if (requested->name == cur.name)
+			{
+				cur.pwd == requested->pwd;
+				joinRequests.erase(requested);
+				break;
+			}
+		}
+		channels.insert(cur);
+		std::ofstream file("channels.list");
+		for (channelSet::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		{
+			file << it->name;
+			if (!it->pwd.empty())
+				file << "  " << it->pwd;
+			file << endl;
 		}
 	}
 }
 
 void ClanBot::JoinFail(const std::string& channame, const std::string& reason)
 {
+	for (channelSet::iterator requested = joinRequests.begin(); requested != joinRequests.end(); ++requested)
+	{
+		if (requested->name == channame)
+		{
+			joinRequests.erase(requested);
+			break;
+		}
+	}
 }
 
 std::string ClanBot::HandleMessage(const std::string& username, const std::string& message)
@@ -173,17 +200,19 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 	else if (message.find("!addchannel") == 0)
 	{
 		std::istringstream stringbuf(message);
-		std::string buf;
-		stringbuf >> buf;
-		stringbuf >> buf;
+		Channel cur;
+		stringbuf >> cur.name;
+		stringbuf >> cur.name;
 		ostringstream output;
-		if (channels.count(buf) == 0)
+		if (!IsInChannel(cur.name))
 		{
-			Join(buf);
-			output << "Joining channel " << buf << endl;
+			stringbuf >> cur.pwd;
+			Join(cur.name, cur.pwd);
+			joinRequests.insert(cur);
+			output << "Joining channel " << cur.name << endl;
 		}
 		else
-			output << "Already in channel " << buf << endl;
+			output << "Already in channel " << cur.name << endl;
 		return output.str();
 	}
 	else
@@ -271,4 +300,14 @@ void ClanBot::ClientStatus(const std::string& username, bool ingame, bool away, 
 			}
 		}
 	}
+}
+
+bool ClanBot::IsInChannel(const std::string& channame)
+{
+	for (channelSet::const_iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		if (it->name == channame)
+			return true;
+	}
+	return false;
 }

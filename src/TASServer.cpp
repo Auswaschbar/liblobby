@@ -65,6 +65,7 @@ void TASServer::Join(const std::string& channel, const std::string& key)
 {
 	Message msg("JOIN");
 	msg.Push(channel);
+	msg.Push(key);
 	SendMessage(msg);
 }
 

@@ -15,6 +15,20 @@ struct User
 	bool isBot;
 };
 
+struct Channel
+{
+	std::string name;
+	std::string pwd;
+};
+
+struct ChannelComparator
+{
+	bool operator()(const Channel& s1, const Channel& s2) const
+	{
+		return s1.name < s2.name;
+	}
+};
+
 class ClanBot : public TASServer
 {
 public:
@@ -46,7 +60,10 @@ private:
 	typedef std::map< std::string, std::list <User> > clanMap;
 	clanMap clanUserMap;
 	
-	std::set<std::string> channels;
+	bool IsInChannel(const std::string& channame);
+	typedef std::set<Channel, ChannelComparator> channelSet;
+	channelSet channels, joinRequests;
+	std::map<std::string, std::string> channelPWD;
 	const std::string server;
 	int port;
 	const std::string user, passwd;
