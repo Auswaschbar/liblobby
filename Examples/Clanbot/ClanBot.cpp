@@ -215,6 +215,13 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 			output << "Already in channel " << cur.name << endl;
 		return output.str();
 	}
+	else if (message.find("!help") == 0)
+	{
+		ostringstream output;
+		output << "Available commands:" << endl;
+		output << "  !addchannel <channelname> [optional:password]\n  !clan <clanname>\n  !online\n  !gtfo\n";
+		return output.str();
+	}
 	else
 		return "";
 }
