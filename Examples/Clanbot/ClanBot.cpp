@@ -160,7 +160,7 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 					buf << "# " << it->name;
 					for (size_t i = it->name.size(); i <= 30; ++i)
 						buf << " ";
-					buf << it->country << " " << it->cpu << endl;
+					buf << it->country << " " << it->cpu << "MHz" << endl;
 				}
 			}
 		}
