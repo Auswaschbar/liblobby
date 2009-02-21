@@ -218,7 +218,7 @@ void TASServer::MessageRecieved(const InMessage& msg)
 		const std::string user = msg.GetWord();
 		unsigned long flags = 0;
 		StringConvert(msg.GetWord(), flags);
-		std::bitset<6> bits(flags);
+		std::bitset<16> bits(flags);
 		const bool ingame = bits[0];
 		const bool away = bits[1];
 		const int rank = (bits[2]? 1 : 0) + (bits[3]? 2 : 0) + (bits[4]? 4 : 0);

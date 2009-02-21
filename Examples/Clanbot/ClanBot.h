@@ -37,6 +37,7 @@ private:
 	// own functions
 	std::string HandleMessage(const std::string& username, const std::string& message);
 
+	unsigned CountPlayersOnlineClan(const std::string& clanname);
 	typedef std::list<std::string> channelList;
 	channelList channels;
 	

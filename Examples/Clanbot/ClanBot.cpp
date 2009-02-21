@@ -87,12 +87,18 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 		buf << "Clan Players online:\n";
 		for (clanMap::const_iterator clanIt = clanUserMap.begin(); clanIt != clanUserMap.end(); ++clanIt)
 		{
-			if (clanIt->second.size() >= minOnline)
+			unsigned numOnline = 0;
+			for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
+			{
+				if (!it->isBot)
+					++numOnline;
+			}
+			if (numOnline >= minOnline)
 			{
 				buf << clanIt->first;
 				for (size_t i = clanIt->first.size(); i <= 10; ++i)
 					buf << " ";
-				buf << clanIt->second.size() << endl;
+				buf << numOnline << endl;
 			}
 		}
 		return buf.str();
@@ -112,7 +118,7 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 		
 		if (clanIt != clanUserMap.end())
 		{
-			buf << "Online players of clan " << tempclan << ": " << clanIt->second.size() << endl;
+			buf << "Online players of clan " << tempclan << ": " << CountPlayersOnlineClan(tempclan) << endl;
 			for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
 			{
 				if (!it->isBot)
@@ -126,7 +132,7 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 		}
 		else
 		{
-			buf << "Clan " << tempclan << " deos not exists or there are no members online" << endl;
+			buf << "Clan " << tempclan << " does not exists or there are no members online" << endl;
 		}
 		return buf.str();
 	}
@@ -144,6 +150,23 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 	}
 	else
 		return "";
+}
+
+unsigned ClanBot::CountPlayersOnlineClan(const std::string& clanname)
+{
+	clanMap::const_iterator clanIt = clanUserMap.find(clanname);
+	if (clanIt != clanUserMap.end())
+	{
+		unsigned num = 0;
+		for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
+		{
+			if (!it->isBot)
+				++num;
+		}
+		return num;
+	}
+	else
+		return 0;
 }
 
 std::string GetClanFromName(const std::string& username)
