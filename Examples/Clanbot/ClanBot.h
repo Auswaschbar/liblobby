@@ -5,6 +5,7 @@
 
 #include <map>
 #include <list>
+#include <set>
 
 struct User
 {
@@ -34,16 +35,18 @@ private:
 	virtual void RemoveUser(const std::string& username);
 	virtual void ClientStatus(const std::string& name, bool ingame, bool away, int rank, bool moderator, bool bot);
 
+	virtual void JoinSuccess(const std::string& channame);
+	virtual void JoinFail(const std::string& channame, const std::string& reason);
+	
 	// own functions
 	std::string HandleMessage(const std::string& username, const std::string& message);
 
 	unsigned CountPlayersOnlineClan(const std::string& clanname);
-	typedef std::list<std::string> channelList;
-	channelList channels;
 	
 	typedef std::map< std::string, std::list <User> > clanMap;
 	clanMap clanUserMap;
 	
+	std::set<std::string> channels;
 	const std::string server;
 	int port;
 	const std::string user, passwd;

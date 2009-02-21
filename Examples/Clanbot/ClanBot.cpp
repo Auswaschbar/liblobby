@@ -9,7 +9,8 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 {
 	Connect(server, port);
 	
-	fstream channelsFile("channels.txt");
+	fstream channelsFile("channels.list");
+	channels.insert("clanbot");
 	while (channelsFile.is_open() && !channelsFile.eof())
 	{
 		std::string line;
@@ -19,7 +20,7 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 		lineBuffer >> channel;
 		if (!channel.empty())
 		{
-			channels.push_back(channel);
+			channels.insert(channel);
 		}
 	}
 }
@@ -36,8 +37,7 @@ void ClanBot::Disconnnected()
 
 void ClanBot::LoginSuccess(const std::string& username)
 {
-	Join("clanbot");
-	for (channelList::const_iterator it = channels.begin(); it != channels.end(); ++it)
+	for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
 	{
 		Join(*it);
 	}
@@ -50,12 +50,28 @@ void ClanBot::LoginFail(const std::string& reason)
 
 void ClanBot::Said(const std::string& channame, const std::string& username, const std::string& message)
 {
-	std::istringstream stringbuf(HandleMessage(username, message));
-	while (!stringbuf.eof())
+	if (message.find("!gtfo") == 0)
 	{
-		std::string line;
-		std::getline(stringbuf,line);
-		SayEx(channame, line);
+		Leave(channame);
+		for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		{
+			if (*it == channame)
+			{
+				channels.erase(it);
+				break;
+			}
+		}
+	}
+	else
+	{
+		std::istringstream stringbuf(HandleMessage(username, message));
+		while (!stringbuf.eof())
+		{
+			std::string line;
+			std::getline(stringbuf,line);
+			if (!line.empty())
+				SayEx(channame, line);
+		}
 	}
 }
 
@@ -66,8 +82,26 @@ void ClanBot::SaidPrivate(const std::string& username, const std::string& messag
 	{
 		std::string line;
 		std::getline(stringbuf,line);
-		SayPrivate(username, line);
+		if (!line.empty())
+			SayPrivate(username, line);
 	}
+}
+
+void ClanBot::JoinSuccess(const std::string& channame)
+{
+	if (channels.count(channame) == 0)
+	{
+		channels.insert(channame);
+		std::ofstream file("channels.list");
+		for (std::set<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+		{
+			file << *it << endl;
+		}
+	}
+}
+
+void ClanBot::JoinFail(const std::string& channame, const std::string& reason)
+{
 }
 
 std::string ClanBot::HandleMessage(const std::string& username, const std::string& message)
@@ -142,10 +176,14 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 		std::string buf;
 		stringbuf >> buf;
 		stringbuf >> buf;
-		Join(buf);
-		channels.push_back(buf);
 		ostringstream output;
-		output << "Joining channel " << buf << endl;
+		if (channels.count(buf) == 0)
+		{
+			Join(buf);
+			output << "Joining channel " << buf << endl;
+		}
+		else
+			output << "Already in channel " << buf << endl;
 		return output.str();
 	}
 	else

@@ -159,7 +159,8 @@ void TASServer::MessageRecieved(const InMessage& msg)
 	}
 	else if (msg.GetCommand() == "JOINFAILED")
 	{
-		JoinFail(msg.GetWord(), msg.GetSentence());
+		std::string buf(msg.GetWord());
+		JoinFail(buf, msg.GetSentence());
 	}
 	else if (msg.GetCommand() == "SAID")
 	{
