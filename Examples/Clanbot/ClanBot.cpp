@@ -115,10 +115,13 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 			buf << "Online players of clan " << tempclan << ": " << clanIt->second.size() << endl;
 			for (std::list <User>::const_iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
 			{
-				buf << "# " << it->name;
-				for (size_t i = it->name.size(); i <= 30; ++i)
-					buf << " ";
-				buf << it->country << " " << it->cpu << endl;
+				if (!it->isBot)
+				{
+					buf << "# " << it->name;
+					for (size_t i = it->name.size(); i <= 30; ++i)
+						buf << " ";
+					buf << it->country << " " << it->cpu << endl;
+				}
 			}
 		}
 		else
