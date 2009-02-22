@@ -184,6 +184,12 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 			{
 				if (!it->isBot)
 				{
+					if (!it->away && !it->ingame)
+						buf << "<#> ";
+					else if (it->ingame)
+						buf << "<I> ";
+					else if (it->away)
+						buf << "<A> ";
 					buf << "# " << it->name;
 					for (size_t i = it->name.size(); i <= 30; ++i)
 						buf << " ";
@@ -219,7 +225,8 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 	{
 		ostringstream output;
 		output << "Available commands:" << endl;
-		output << "  !addchannel <channelname> [optional:password]\n  !clan <clanname>\n  !online\n  !gtfo\n";
+		output << "  !addchannel <channelname> [optional:password]\n-> <#> - user is available\n-> <A> - away\n-> <I> - ingame\n";
+		output << "!clan <clanname>\n  !online\n  !gtfo\n";
 		return output.str();
 	}
 	else
@@ -266,6 +273,8 @@ void ClanBot::AddUser(const std::string& username, const std::string& country, c
 		temp.country = country;
 		temp.cpu = cpu;
 		temp.isBot = false;
+		temp.away = false;
+		temp.ingame = false;
 		clanUserMap[clan].push_back(temp);
 	}
 }
@@ -302,6 +311,8 @@ void ClanBot::ClientStatus(const std::string& username, bool ingame, bool away, 
 				if (it->name == username)
 				{
 					it->isBot = true;
+					it->ingame = ingame;
+					it->away = away;
 					return;
 				}
 			}

@@ -13,6 +13,8 @@ struct User
 	std::string country;
 	std::string cpu;
 	bool isBot;
+	bool ingame;
+	bool away;
 };
 
 struct Channel
