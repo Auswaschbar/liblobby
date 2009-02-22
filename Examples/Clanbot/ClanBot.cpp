@@ -12,7 +12,7 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 	fstream channelsFile("channels.list");
 	{
 		Channel cur;
-		cur.name = "clanbot";
+		cur.name = "clans";
 		joinRequests.insert(cur);
 	}
 	while (channelsFile.is_open() && !channelsFile.eof())
@@ -57,6 +57,11 @@ void ClanBot::Said(const std::string& channame, const std::string& username, con
 {
 	if (message.find("!gtfo") == 0)
 	{
+		if (channame == "clans")
+		{
+			SayEx(channame, ": GTFO yourself, noob!");
+			return;
+		}
 		Leave(channame);
 		for (channelSet::const_iterator it = channels.begin(); it != channels.end(); ++it)
 		{
