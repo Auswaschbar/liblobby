@@ -225,8 +225,9 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 	{
 		ostringstream output;
 		output << "Available commands:" << endl;
-		output << "  !addchannel <channelname> [optional:password]\n-> <#> - user is available\n-> <A> - away\n-> <I> - ingame\n";
-		output << "!clan <clanname>\n  !online\n  !gtfo\n";
+		output << "  !addchannel <channelname> [optional:password]\n";
+		output << "  !clan <clanname>\n  -> <#> - user is available\n  -> <A> - away\n  -> <I> - ingame\n";
+		output << "  !online\n  !gtfo\n";
 		return output.str();
 	}
 	else
