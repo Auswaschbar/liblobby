@@ -190,7 +190,7 @@ std::string ClanBot::HandleMessage(const std::string& username, const std::strin
 						buf << "<I> ";
 					else if (it->away)
 						buf << "<A> ";
-					buf << "# " << it->name;
+					buf << it->name;
 					for (size_t i = it->name.size(); i <= 30; ++i)
 						buf << " ";
 					buf << it->country << " " << it->cpu << "MHz" << endl;
@@ -302,20 +302,17 @@ void ClanBot::RemoveUser(const std::string& username)
 
 void ClanBot::ClientStatus(const std::string& username, bool ingame, bool away, int rank, bool moderator, bool bot)
 {
-	if (bot)
+	clanMap::iterator clanIt = clanUserMap.find(GetClanFromName(username));
+	if (clanIt != clanUserMap.end())
 	{
-		clanMap::iterator clanIt = clanUserMap.find(GetClanFromName(username));
-		if (clanIt != clanUserMap.end())
+		for (std::list <User>::iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
 		{
-			for (std::list <User>::iterator it = clanIt->second.begin(); it != clanIt->second.end(); ++it)
+			if (it->name == username)
 			{
-				if (it->name == username)
-				{
-					it->isBot = true;
-					it->ingame = ingame;
-					it->away = away;
-					return;
-				}
+				it->isBot = bot;
+				it->ingame = ingame;
+				it->away = away;
+				return;
 			}
 		}
 	}
