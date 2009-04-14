@@ -90,7 +90,6 @@ void Client::_DataRecieved(const boost::system::error_code& ec)
 	}
 	else if (ec.value() == boost::asio::error::eof)
 	{
-		LOG("Client disconnected" << std::endl);
 		Disconnected();
 	}
 	else

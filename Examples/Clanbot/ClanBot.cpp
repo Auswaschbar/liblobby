@@ -8,6 +8,12 @@ using namespace std;
 ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_, const std::string& passwd_) : server(_server), port(_port), user(user_), passwd(passwd_)
 {
 	Connect(server, port);
+}
+
+void ClanBot::Connected()
+{
+	Login(user, passwd, "1337", "*", "liblobby V0.2");
+	cout << "Connected to TASServer\n";
 	
 	fstream channelsFile("channels.list");
 	{
@@ -28,11 +34,6 @@ ClanBot::ClanBot(const std::string& _server, int _port, const std::string& user_
 			joinRequests.insert(cur);
 		}
 	}
-}
-
-void ClanBot::Connected()
-{
-	Login(user, passwd, "1337", "*", "liblobby V0.2");
 }
 
 void ClanBot::Disconnnected()
