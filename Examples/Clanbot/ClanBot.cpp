@@ -38,6 +38,7 @@ void ClanBot::Connected()
 
 void ClanBot::Disconnnected()
 {
+	cout << "Trying to reconnect\n";
 	Connect(server, port);
 }
 
