@@ -32,6 +32,7 @@ void ClanBot::Connected()
 		{
 			lineBuffer >> cur.pwd;
 			joinRequests.insert(cur);
+			cout << "Added channel " << cur.name << " to channel join list\n";
 		}
 	}
 }
