@@ -58,7 +58,8 @@ void Client::Send(const std::string& msg)
 void Client::Run()
 {
 	LOG("Running seperate thread" << std::endl);
-	io_service.run();
+	while (connected)
+		io_service.run();
 	LOG("Finished running seperate thread" << std::endl);
 }
 
