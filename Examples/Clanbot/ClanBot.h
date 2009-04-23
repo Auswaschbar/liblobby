@@ -39,7 +39,7 @@ public:
 private:
 	// TASServer callbacks
 	virtual void Connected();
-	virtual void Disconnnected();
+	virtual void Disconnected();
 
 	virtual void LoginSuccess(const std::string& username);
 	virtual void LoginFail(const std::string& reason);
