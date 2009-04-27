@@ -35,6 +35,7 @@ void ClanBot::Connected()
 			cout << "Added channel " << cur.name << " to channel join list\n";
 		}
 	}
+	clanUserMap.clear();
 }
 
 void ClanBot::Disconnected()
